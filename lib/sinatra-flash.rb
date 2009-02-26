@@ -2,8 +2,8 @@ module Sinatra
   module Flash
     # Implements bracket accessors for storing and retrieving flash entries.
     class FlashHash
-      def initialize(env)
-        @session = env['rack.session']
+      def initialize(session)
+        @session = session
         @session[:__FLASH__] ||= {}
       end
 
@@ -41,7 +41,7 @@ module Sinatra
     end
 
     def flash
-      @flash ||= Sinatra::Flash::FlashHash.new(env)
+      @flash ||= Sinatra::Flash::FlashHash.new(session)
     end
   end
 end

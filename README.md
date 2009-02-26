@@ -1,6 +1,8 @@
 # Sinatra Flash
 
-Simple flash hash implementation for Sinatra.
+Simple flash hash implementation for Sinatra. My implementation has slightly
+different behavior than Rails in that it doesn't delete entries until they used.
+I think it's pretty rad, but I'm happy to hear thoughts to the contrary.
 
 ## Usage
 
