@@ -16,6 +16,11 @@ describe 'Sinatra::Flash' do
     new_flash[:foo].should.equal('bar')
   end
   
+  it 'accepts strings or hashes' do
+    new_flash[:foo] = 'bar'
+    new_flash['foo'].should.equal('bar')
+  end
+  
   it 'deletes entries from session after retrieval' do
     new_flash[:foo] = 'bar'
     new_flash[:foo]

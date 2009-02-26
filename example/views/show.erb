@@ -1,0 +1,15 @@
+<div id="result">
+  <% if flash.has?(params[:name]) %>
+    <h1 class="highlight"><%= flash[params[:name]] %></h1>
+    <cite>- from <code>flash[:<%= params[:name] %>]</code></cite>
+  <% else %>
+    <p>No flash message for <code>flash[:<%= params[:name] %>]</code></p>
+  <% end %>
+  
+  <br>
+  
+  <small>
+    <a href="/">Go Back Home</a>
+  </small>
+</div>
+

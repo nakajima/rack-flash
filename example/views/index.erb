@@ -1,0 +1,28 @@
+<% if flash.has?(:err) %>
+  <h3 class="err"><%= flash[:err] %></h3>
+<% end %>
+
+<% if flash.has?(:ok) %>
+  <h3 class="ok"><%= flash[:ok] %></h3>
+<% end %>
+
+<% [:notice, :error, :success, :whatevz, :bliggety].each do |name| %>
+  <form action="/<%= name %>" method="post" accept-charset="utf-8">
+    <label>
+      <span>
+        <% if flash.has?(name) %>
+          <a href="/<%= name %>">View Current</a>
+        <% end %>
+        
+        Set <code>flash[:<%= name %>]</code>
+        
+        <% if err = flash["err_on_#{name}"] %>
+          <strong class="err_on">Required!</strong>
+        <% end %>
+      </span>
+      <input type="text" name="message" value="" id="message">
+    </label>
+    
+    <input type="submit" value="Set Flash">
+  </form>
+<% end %>

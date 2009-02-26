@@ -14,12 +14,18 @@ module Sinatra
       # Remove an entry from the session and return its value. Cache result in
       # the instance cache.
       def [](key)
-        cache[key] ||= values.delete(key)
+        get(key.to_sym)
       end
 
       # Store the entry in the session, updating the instance cache as well.
       def []=(key,val)
-        cache[key] = values[key] = val
+        set(key.to_sym, val)
+      end
+      
+      # Checks for the presence of a flash entry without retrieving or removing
+      # it from the cache or store.
+      def has?(key)
+        [cache, values].any? { |store| store.keys.include?(key.to_sym) }
       end
 
       # Hide the underlying :__FLASH__ session key and only expose values stored
@@ -40,6 +46,16 @@ module Sinatra
       end
 
       private
+      
+      def get(key)
+        raise ArgumentError.new("Flash key must be symbol.") unless key.is_a?(Symbol)
+        cache[key] ||= values.delete(key)
+      end
+      
+      def set(key, val)
+        raise ArgumentError.new("Flash key must be symbol.") unless key.is_a?(Symbol)
+        cache[key] = values[key] = val
+      end
 
       # Maintain an instance-level cache of retrieved flash entries. These entries
       # will have been removed from the session, but are still available through
