@@ -24,11 +24,36 @@
 		h2 { font-size: 1.5em; color: #000000; }
     h3 { text-align: center; color: #000000; }
     a { color: #000000; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
+    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; }
     .download { float: right; }
 		pre { background: #000; color: #fff; padding: 15px;}
     hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
     .footer { text-align:center; padding-top:30px; font-style: italic; }
+    
+    pre {
+		  font-family: Bitstream Vera Sans Mono;
+		  font-size: 0.9em;
+		}
+		code {
+		  font-family: Bitstream Vera Sans Mono;
+		  font-size: 0.9em;
+		}
+		
+		pre code {
+		  font-size: 1em;
+		}
+		
+		.c1 {
+		  color: #555;
+		}
+		
+		.s2, .s1 {
+		  color: #f09;
+		}
+		
+		.ss {
+		  color: #52B7E0;
+		}
 	</style>
 	
 </head>
@@ -49,10 +74,8 @@
       <span class="small">by <a href="http://github.com/nakajima">nakajima</a></small></h1>
 
     <div class="description">
-      <code>flash[:notice] = "You can stop rolling your own now."</code>
+      <div class="highlight"><pre><span class="n">flash</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;You can stop rolling your own now.&quot;</span></pre></div>
     </div>
-
-    <p><h1 id="rack_flash">Rack Flash</h1>
 
 <p>Simple flash hash implementation for Rack apps.</p>
 
@@ -67,72 +90,84 @@
 <p>You can access flash entries via <code>env['rack-flash']</code>. You can treat it either
 like a regular flash hash:</p>
 
-<pre><code>env['rack-flash'][:notice] = 'You have logged out.'
-</code></pre>
+<div class="highlight"><pre><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Flash</span><span class="p">,</span> <span class="ss">:accessorize</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:notice</span><span class="p">,</span> <span class="ss">:error</span><span class="o">]</span>
+
+<span class="c1"># Set a flash entry</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="o">=</span> <span class="s1">&#39;You have logged out.&#39;</span>
+
+<span class="c1"># Get a flash entry</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="c1"># =&gt; &#39;You have logged out.&#39;</span>
+
+<span class="c1"># Set a a flash entry for only the current request</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice!</span> <span class="s1">&#39;You have logged out.&#39;</span>
+</pre></div>
+
 
 <p>Or you can pass the <code>:accessorize</code> option to declare your flash types. Each of
 these will have accessors defined on the flash object:</p>
 
-<pre><code>use Rack::Flash, :accessorize =&gt; [:notice, :error]
+<div class="highlight"><pre><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Flash</span><span class="p">,</span> <span class="ss">:accessorize</span> <span class="o">=></span> <span class="o">[</span><span class="ss">:notice</span><span class="p">,</span> <span class="ss">:error</span><span class="o">]</span>
 
-# Set a flash entry
-env['rack-flash'].notice = 'You have logged out.'
+<span class="c1"># Set a flash entry</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="o">=</span> <span class="s1">&#39;You have logged out.&#39;</span>
 
-# Get a flash entry
-env['rack-flash'].notice # =&gt; 'You have logged out.'
+<span class="c1"># Get a flash entry</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="c1"># =&amp;gt; &#39;You have logged out.&#39;</span>
 
-# Set a a flash entry for only the current request
-env['rack-flash'].notice! 'You have logged out.'
-</code></pre>
+<span class="c1"># Set a a flash entry for only the current request</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice!</span> <span class="s1">&#39;You have logged out.&#39;</span>
+</pre></div>
+
 
 <p>Sample rack app:</p>
 
-<pre><code>get = proc { |env|
-  [200, {},
-    env['rack-flash'].notice || 'No flash set. Try going to /set'
-  ]
-}
+<div class="highlight"><pre><span class="n">get</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+  <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{},</span>
+    <span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="o">||</span> <span class="s1">&#39;No flash set. Try going to /set&#39;</span>
+  <span class="o">]</span>
+<span class="p">}</span>
 
-set = proc { |env|
-  env['rack-flash'].notice = 'Hey, the flash was set!'
-  [302, {'Location' =&gt; '/'},
-    'You are being redirected.'
-  ]
-}
+<span class="n">set</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+  <span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="o">=</span> <span class="s1">&#39;Hey, the flash was set!&#39;</span>
+  <span class="o">[</span><span class="mi">302</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Location&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/&#39;</span><span class="p">},</span>
+    <span class="s1">&#39;You are being redirected.&#39;</span>
+  <span class="o">]</span>
+<span class="p">}</span>
 
-builder = Rack::Builder.new do
-  use Rack::Session::Cookie
-  use Rack::Flash, :accessorize =&gt; true
+<span class="n">builder</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Builder</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+  <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Session</span><span class="o">::</span><span class="no">Cookie</span>
+  <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Flash</span><span class="p">,</span> <span class="ss">:accessorize</span> <span class="o">=&gt;</span> <span class="kp">true</span>
 
-  map('/set') { run set }
-  map('/')    { run get }
-end
+  <span class="n">map</span><span class="p">(</span><span class="s1">&#39;/set&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="n">run</span> <span class="n">set</span> <span class="p">}</span>
+  <span class="n">map</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>    <span class="p">{</span> <span class="n">run</span> <span class="n">get</span> <span class="p">}</span>
+<span class="k">end</span>
 
-Rack::Handler::Mongrel.run builder, :Port =&gt; 9292
-</code></pre>
+<span class="no">Rack</span><span class="o">::</span><span class="no">Handler</span><span class="o">::</span><span class="no">Mongrel</span><span class="o">.</span><span class="n">run</span> <span class="n">builder</span><span class="p">,</span> <span class="ss">:Port</span> <span class="o">=&gt;</span> <span class="mi">9292</span>
+</pre></div>
 
 <h3 id="sinatra">Sinatra</h3>
 
 <p>If you&#8217;re using Sinatra, you can use the flash hash just like in Rails:</p>
 
-<pre><code>require 'sinatra/base'
-require 'rack-flash'
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;sinatra/base&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;rack-flash&#39;</span>
 
-class MyApp &lt; Sinatra::Base
-  use Rack::Flash
+<span class="k">class</span> <span class="nc">MyApp</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">Sinatra</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Flash</span>
 
-  post '/set-flash' do
-    # Set a flash entry
-    flash[:notice] = "Thanks for signing up!"
+  <span class="n">post</span> <span class="s1">&#39;/set-flash&#39;</span> <span class="k">do</span>
+    <span class="c1"># Set a flash entry</span>
+    <span class="n">flash</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;Thanks for signing up!&quot;</span>
 
-    # Get a flash entry
-    flash[:notice] # =&gt; "Thanks for signing up!"
+    <span class="c1"># Get a flash entry</span>
+    <span class="n">flash</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> <span class="c1"># =&amp;gt; &quot;Thanks for signing up!&quot;</span>
 
-    # Set a flash entry for only the current request
-    flash.now[:notice] = "Thanks for signing up!"
-  end
-end
-</code></pre>
+    <span class="c1"># Set a flash entry for only the current request</span>
+    <span class="n">flash</span><span class="o">.</span><span class="n">now</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;Thanks for signing up!&quot;</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
 
 <p>If you&#8217;ve got any ideas on how to simplify access to the flash hash for vanilla
 Rack apps, let me know. It still feels a bit off to me.</p>
@@ -143,8 +178,8 @@ Rack apps, let me know. It still feels a bit off to me.</p>
 doesn&#8217;t delete entries until they are used. If you want entries to be cleared
 even if they are not ever accessed, you can use the <code>:sweep</code> option:</p>
 
-<pre><code>use Rack::Flash, :sweep =&gt; true
-</code></pre>
+<div class="highlight"><pre><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Flash</span><span class="p">,</span> <span class="ss">:sweep</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</pre></div>
 
 <p>This will sweep stale flash entries, whether your not you actually use them.</p>
 
@@ -176,9 +211,12 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.</pre></p>
 <h2>Authors</h2>
-<p>Pat Nakajima (patnakajima@gmail.com)<br/><br/>      </p>
+<p>Pat Nakajima (patnakajima@gmail.com)
+<br/>
+<br/>      </p>
 <h2>Contact</h2>
-<p>Pat Nakajima (patnakajima@gmail.com)<br/>      </p>
+<p>Pat Nakajima (patnakajima@gmail.com)
+<br/>      </p>
 
 
     <h2>Download</h2>
