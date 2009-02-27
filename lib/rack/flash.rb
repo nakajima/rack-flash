@@ -2,6 +2,8 @@ require 'metaid'
 
 module Rack
   class Flash
+    # Raised when the session passed to FlashHash initialize is nil. This
+    # is usually an indicator that session middleware is not in use.
     class SessionUnavailable < StandardError; end
     
     # Implements bracket accessors for storing and retrieving flash entries.
@@ -20,12 +22,14 @@ module Rack
       # Remove an entry from the session and return its value. Cache result in
       # the instance cache.
       def [](key)
-        get(key.to_sym)
+        key = key.to_sym
+        cache[key] ||= values.delete(key)
       end
 
       # Store the entry in the session, updating the instance cache as well.
       def []=(key,val)
-        set(key.to_sym, val)
+        key = key.to_sym
+        cache[key] = values[key] = val
       end
       
       # Checks for the presence of a flash entry without retrieving or removing
@@ -69,16 +73,20 @@ module Rack
 
       private
       
-      def get(key)
-        raise ArgumentError.new("Flash key must be symbol.") unless key.is_a?(Symbol)
-        cache[key] ||= values.delete(key)
+      # Maintain an instance-level cache of retrieved flash entries. These
+      # entries will have been removed from the session, but are still available
+      # through the cache.
+      def cache
+        @cache ||= {}
+      end
+
+      # Helper to access flash entries from :__FLASH__ session value. This key
+      # is used to prevent collisions with other user-defined session values.
+      def values
+        @store[:__FLASH__]
       end
       
-      def set(key, val)
-        raise ArgumentError.new("Flash key must be symbol.") unless key.is_a?(Symbol)
-        cache[key] = values[key] = val
-      end
-      
+      # Generate accessor methods for the given entry key if :accessorize is true.
       def def_accessors(key)
         return if respond_to?(key)
         
@@ -90,36 +98,24 @@ module Rack
           self[key] = val
         end
       end
-
-      # Maintain an instance-level cache of retrieved flash entries. These entries
-      # will have been removed from the session, but are still available through
-      # the cache.
-      def cache
-        @cache ||= {}
-      end
-
-      # Helper to access flash entries from :__FLASH__ session value. This key
-      # is used to prevent collisions with other user-defined session values.
-      def values
-        @store[:__FLASH__]
-      end
     end
+
+    # -------------------------------------------------------------------------
+    # - Rack Middleware implementation
     
     def initialize(app, opts={})
+      if defined?(Sinatra::Base)
+        Sinatra::Base.class_eval do
+          def flash; env['rack-flash'] end
+        end
+      end
+      
       @app, @opts = app, opts
     end
 
     def call(env)
       env['rack-flash'] = Rack::Flash::FlashHash.new(env['rack.session'], @opts)
       @app.call(env)
-    end
-  end
-end
-
-if defined?(Sinatra::Base)
-  Sinatra::Base.class_eval do
-    def flash
-      env['rack-flash']
     end
   end
 end
