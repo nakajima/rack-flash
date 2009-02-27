@@ -1,3 +1,5 @@
+require 'metaid'
+
 module Rack
   class Flash
     class SessionUnavailable < StandardError; end
@@ -6,7 +8,11 @@ module Rack
     class FlashHash
       attr_reader :flagged
       
-      def initialize(store)
+      def initialize(store, opts={})
+        raise Rack::Flash::SessionUnavailable \
+          .new('Rack::Flash depends on session middleware.') unless store
+        
+        @opts = opts
         @store = store
         @store[:__FLASH__] ||= {}
       end
@@ -49,6 +55,17 @@ module Rack
       def to_s
         values.inspect
       end
+      
+      # Allow more convenient style for accessing flash entries (This isn't really
+      # necessary for Sinatra, since it provides the flash[:foo] hash that we're all
+      # used to. This is for vanilla Rack apps where it can be difficult to define
+      # such helpers as middleware).
+      def method_missing(sym, *args)
+        super unless @opts[:accessorize]
+        key = sym.to_s =~ /\w=$/ ? sym.to_s[0..-2] : sym
+        def_accessors(key)
+        send(sym, *args)
+      end
 
       private
       
@@ -60,6 +77,18 @@ module Rack
       def set(key, val)
         raise ArgumentError.new("Flash key must be symbol.") unless key.is_a?(Symbol)
         cache[key] = values[key] = val
+      end
+      
+      def def_accessors(key)
+        return if respond_to?(key)
+        
+        meta_def(key) do
+          self[key]
+        end
+        
+        meta_def("#{key}=") do |val|
+          self[key] = val
+        end
       end
 
       # Maintain an instance-level cache of retrieved flash entries. These entries
@@ -76,19 +105,21 @@ module Rack
       end
     end
     
-    def initialize(app)
-      @app = app
-      @app.class.class_eval do
-        def flash
-          raise Rack::Flash::SessionUnavailable \
-            .new('Rack::Flash depends on session middleware.') unless env['rack.session']
-          @flash ||= Rack::Flash::FlashHash.new(env['rack.session'])
-        end
-      end
+    def initialize(app, opts={})
+      @app, @opts = app, opts
     end
-    
+
     def call(env)
+      env['rack-flash'] = Rack::Flash::FlashHash.new(env['rack.session'], @opts)
       @app.call(env)
+    end
+  end
+end
+
+if defined?(Sinatra::Base)
+  Sinatra::Base.class_eval do
+    def flash
+      env['rack-flash']
     end
   end
 end

@@ -57,6 +57,38 @@ describe 'Rack::Flash' do
     end
   end
   
+  describe 'accessorize option' do
+    def new_flash(entries={})
+      flash = Rack::Flash::FlashHash.new(@fake_session, :accessorize => true)
+      entries.each { |key,val| flash[key] = val }
+      flash
+    end
+    
+    it 'allows getters' do
+      flash = new_flash(:foo => 'bar')
+      flash.foo.should.equal('bar')
+    end
+    
+    it 'allows setters' do
+      flash = new_flash
+      flash.fizz = 'buzz'
+      flash.fizz.should.equal('buzz')
+    end
+  end
+  
+  it 'does not provide getters by default' do
+    proc {
+      new_flash(:foo => 'bar').foo
+    }.should.raise(NoMethodError)
+  end
+
+  it 'does not provide setters by default' do
+    proc {
+      flash = new_flash
+      flash.fizz = 'buzz'
+    }.should.raise(NoMethodError)
+  end
+  
   describe 'session integration' do
     before do
       mock_app {
@@ -80,7 +112,7 @@ describe 'Rack::Flash' do
         get '/view'
         body.should.be.empty
       end
-    end    
+    end
   end
   
   # Testing sessions is a royal pain in the ass.
