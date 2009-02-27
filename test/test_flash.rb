@@ -74,6 +74,12 @@ describe 'Rack::Flash' do
       flash.fizz = 'buzz'
       flash.fizz.should.equal('buzz')
     end
+    
+    it 'allows declarative setters' do
+      flash = new_flash
+      flash.fizz 'buzz'
+      flash.fizz.should.equal('buzz')
+    end
   end
   
   it 'does not provide getters by default' do

@@ -90,8 +90,12 @@ module Rack
       def def_accessors(key)
         return if respond_to?(key)
         
-        meta_def(key) do
-          self[key]
+        meta_def(key) do |*args|
+          if val = args.first
+            self[key] = val
+          else
+            self[key]
+          end
         end
         
         meta_def("#{key}=") do |val|
