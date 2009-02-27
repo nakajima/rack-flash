@@ -1,5 +1,7 @@
 # Rack Flash
 
+    flash[:notice] = "You can stop rolling your own now."
+
 Simple flash hash implementation for Rack apps.
 
 Try it out here: [flash.patnakajima.net](http://flash.patnakajima.net).
