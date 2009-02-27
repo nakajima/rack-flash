@@ -3,7 +3,7 @@ require 'sinatra/base'
 require File.join(File.dirname(__FILE__), *%w[.. lib sinatra-flash.rb])
 
 class MyApp < Sinatra::Base
-  include Sinatra::Flash
+  use Rack::Flash
 
   set :root, File.dirname(__FILE__)
   set :layout, true
@@ -11,7 +11,8 @@ class MyApp < Sinatra::Base
   set :sessions, true
   
   before do
-    puts session.inspect
+    @env['rack.errors'].write '[flash] %s ' % flash
+    @env['rack.errors'].write "\n"
   end
   
   get '/' do

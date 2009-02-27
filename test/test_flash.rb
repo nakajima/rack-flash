@@ -6,7 +6,7 @@ describe 'Sinatra::Flash' do
   end
   
   def new_flash(entries={})
-    flash = Sinatra::Flash::FlashHash.new(@fake_session)
+    flash = Rack::Flash::FlashHash.new(@fake_session)
     entries.each { |key,val| flash[key] = val }
     flash
   end
@@ -60,7 +60,7 @@ describe 'Sinatra::Flash' do
   describe 'session integration' do
     before do
       mock_app {
-        include Sinatra::Flash
+        use Rack::Flash
 
         set :sessions, true
 

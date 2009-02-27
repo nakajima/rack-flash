@@ -1,14 +1,14 @@
-module Sinatra
-  module Flash
+module Rack
+  class Flash
     class SessionUnavailable < StandardError; end
     
     # Implements bracket accessors for storing and retrieving flash entries.
     class FlashHash
       attr_reader :flagged
       
-      def initialize(session)
-        @session = session
-        @session[:__FLASH__] ||= {}
+      def initialize(store)
+        @store = store
+        @store[:__FLASH__] ||= {}
       end
 
       # Remove an entry from the session and return its value. Cache result in
@@ -32,6 +32,10 @@ module Sinatra
       # in the flash.
       def inspect
         '#<FlashHash @values=%s>' % [values.inspect]
+      end
+      
+      def to_s
+        values.inspect
       end
       
       # Mark existing entries to allow for sweeping.
@@ -67,14 +71,23 @@ module Sinatra
       # Helper to access flash entries from :__FLASH__ session value. This key
       # is used to prevent collisions with other user-defined session values.
       def values
-        @session[:__FLASH__]
+        @store[:__FLASH__]
       end
     end
-
-    def flash
-      raise Sinatra::Flash::SessionUnavailable \
-        .new('You must have sessions enabled to use Sinatra::Flash.') unless env['rack.session']
-      @flash ||= Sinatra::Flash::FlashHash.new(session)
+    
+    def initialize(app)
+      @app = app
+      @app.class.class_eval do
+        def flash
+          raise Rack::Flash::SessionUnavailable \
+            .new('You must have sessions enabled to use Rack::Flash.') unless env['rack.session']
+          @flash ||= Rack::Flash::FlashHash.new(env['rack.session'])
+        end
+      end
+    end
+    
+    def call(env)
+      @app.call(env)
     end
   end
 end
