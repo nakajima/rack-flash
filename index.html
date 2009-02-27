@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>nakajima/rack-flash @ GitHub</title>
+	
+	<style type="text/css">
+		body {
+  		margin-top: 1.0em;
+  		background-color: #ffffff;
+		  font-family: "helvetica"; 
+  		color: #000000;
+    }
+    #container {
+      margin: 0 auto;
+      width: 700px;
+    }
+		h1 { font-size: 3.8em; color: #000000; margin-bottom: 3px; }
+		h1 .small { font-size: 0.4em; }
+		h1 a { text-decoration: none }
+		h2 { font-size: 1.5em; color: #000000; }
+    h3 { text-align: center; color: #000000; }
+    a { color: #000000; }
+    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
+    .download { float: right; }
+		pre { background: #000; color: #fff; padding: 15px;}
+    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    .footer { text-align:center; padding-top:30px; font-style: italic; }
+	</style>
+	
+</head>
+
+<body>
+  <a href="http://github.com/nakajima/rack-flash"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  
+  <div id="container">
+
+    <div class="download">
+      <a href="http://github.com/nakajima/rack-flash/zipball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
+      <a href="http://github.com/nakajima/rack-flash/tarball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+    </div>
+      
+    <h1><a href="http://github.com/nakajima/rack-flash">rack-flash</a> 
+      <span class="small">by <a href="http://github.com/nakajima">nakajima</a></small></h1>
+
+    <div class="description">
+      <code>flash[:notice] = "You can stop rolling your own now."</code>
+    </div>
+
+    <p><h1 id="rack_flash">Rack Flash</h1>
+
+<p>Simple flash hash implementation for Rack apps.</p>
+
+<p>Try it out here: <a href="http://flash.patnakajima.net">flash.patnakajima.net</a>.</p>
+
+<h2 id="usage">Usage</h2>
+
+<p>Here&#8217;s how to use it.</p>
+
+<h3 id="vanilla_rack_apps">Vanilla Rack apps</h3>
+
+<p>You can access flash entries via <code>env['rack-flash']</code>. You can treat it either
+like a regular flash hash:</p>
+
+<pre><code>env['rack-flash'][:notice] = 'You have logged out.'
+</code></pre>
+
+<p>Or you can pass the <code>:accessorize</code> option to declare your flash types. Each of
+these will have accessors defined on the flash object:</p>
+
+<pre><code>use Rack::Flash, :accessorize =&gt; [:notice, :error]
+
+# Set a flash entry
+env['rack-flash'].notice = 'You have logged out.'
+
+# Get a flash entry
+env['rack-flash'].notice # =&gt; 'You have logged out.'
+
+# Set a a flash entry for only the current request
+env['rack-flash'].notice! 'You have logged out.'
+</code></pre>
+
+<p>Sample rack app:</p>
+
+<pre><code>get = proc { |env|
+  [200, {},
+    env['rack-flash'].notice || 'No flash set. Try going to /set'
+  ]
+}
+
+set = proc { |env|
+  env['rack-flash'].notice = 'Hey, the flash was set!'
+  [302, {'Location' =&gt; '/'},
+    'You are being redirected.'
+  ]
+}
+
+builder = Rack::Builder.new do
+  use Rack::Session::Cookie
+  use Rack::Flash, :accessorize =&gt; true
+
+  map('/set') { run set }
+  map('/')    { run get }
+end
+
+Rack::Handler::Mongrel.run builder, :Port =&gt; 9292
+</code></pre>
+
+<h3 id="sinatra">Sinatra</h3>
+
+<p>If you&#8217;re using Sinatra, you can use the flash hash just like in Rails:</p>
+
+<pre><code>require 'sinatra/base'
+require 'rack-flash'
+
+class MyApp &lt; Sinatra::Base
+  use Rack::Flash
+
+  post '/set-flash' do
+    # Set a flash entry
+    flash[:notice] = "Thanks for signing up!"
+
+    # Get a flash entry
+    flash[:notice] # =&gt; "Thanks for signing up!"
+
+    # Set a flash entry for only the current request
+    flash.now[:notice] = "Thanks for signing up!"
+  end
+end
+</code></pre>
+
+<p>If you&#8217;ve got any ideas on how to simplify access to the flash hash for vanilla
+Rack apps, let me know. It still feels a bit off to me.</p>
+
+<h2 id="sweeping_stale_entries">Sweeping stale entries</h2>
+
+<p>By default Rack::Flash has slightly different behavior than Rails in that it
+doesn&#8217;t delete entries until they are used. If you want entries to be cleared
+even if they are not ever accessed, you can use the <code>:sweep</code> option:</p>
+
+<pre><code>use Rack::Flash, :sweep =&gt; true
+</code></pre>
+
+<p>This will sweep stale flash entries, whether your not you actually use them.</p>
+
+</p><h2>Dependencies</h2>
+<p>rack</p>
+<h2>Install</h2>
+<p>gem install nakajima-rack-flash</p>
+<h2>License</h2>
+<p><pre>Copyright (c) 2009 Pat Nakajima
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.</pre></p>
+<h2>Authors</h2>
+<p>Pat Nakajima (patnakajima@gmail.com)<br/><br/>      </p>
+<h2>Contact</h2>
+<p>Pat Nakajima (patnakajima@gmail.com)<br/>      </p>
+
+
+    <h2>Download</h2>
+    <p>
+      You can download this project in either
+      <a href="http://github.com/nakajima/rack-flash/zipball/master">zip</a> or
+      <a href="http://github.com/nakajima/rack-flash/tarball/master">tar</a> formats.
+    </p>
+    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+      by running:
+      <pre>$ git clone git://github.com/nakajima/rack-flash</pre>
+    </p>
+      
+    <div class="footer">
+      get the source code on GitHub : <a href="http://github.com/nakajima/rack-flash">nakajima/rack-flash</a>
+    </div>
+    
+  </div>
+
+  
+</body>
+</html>
