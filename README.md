@@ -10,6 +10,9 @@ Try it out here: [flash.patnakajima.net](http://flash.patnakajima.net).
 
 You can see the app in the `example/` directory, but it's pretty simple:
 
+    require 'sinatra/base'
+    require 'rack-flash'
+
     class MyApp < Sinatra::Base
       use Rack::Flash
 

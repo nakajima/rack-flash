@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'sinatra/base'
-require File.join(File.dirname(__FILE__), *%w[.. lib sinatra-flash.rb])
+require File.dirname(__FILE__) + '/../lib/rack-flash'
 
 class MyApp < Sinatra::Base
   use Rack::Flash

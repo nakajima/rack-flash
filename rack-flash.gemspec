@@ -8,7 +8,10 @@ Gem::Specification.new do |s|
   s.authors = ["Pat Nakajima"]
   s.date = %q{2009-02-26}
   s.email = %q{patnakajima@gmail.com}
-  s.files = ["lib/rack-flash.rb"]
+  s.files = [
+    "lib/rack-flash.rb",
+    "lib/rack/flash.rb"
+  ]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{Flash hash implementation for Rack apps.}
