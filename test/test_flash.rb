@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/helper'
 
-describe 'Sinatra::Flash' do
+describe 'Rack::Flash' do
   before do
     @fake_session = {}
   end

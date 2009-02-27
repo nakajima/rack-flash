@@ -3,7 +3,7 @@ require 'sinatra/base'
 require 'bacon'
 require 'sinatra/test'
 require 'sinatra/test/bacon'
-require File.join(File.dirname(__FILE__), *%w[.. lib sinatra-flash])
+require File.join(File.dirname(__FILE__), *%w[.. lib rack-flash])
 
 class String
   [:green, :yellow, :red].each { |c| define_method(c) { self } }

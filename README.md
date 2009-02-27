@@ -1,13 +1,15 @@
-# Sinatra Flash
+# Rack Flash
 
-Simple flash hash implementation for Sinatra. My implementation has slightly
+Simple flash hash implementation for Raçk apps. My implementation has slightly
 different behavior than Rails in that it doesn't delete entries until they used.
 I think it's pretty rad, but I'm happy to hear thoughts to the contrary.
 
 ## Usage
 
+You can see the app in the `example/` directory, but it's pretty simple:
+
     class MyApp < Sinatra::Base
-      include Sinatra::Flash
+      use Rack::Flash
 
       get '/' do
         flash[:greeting] || "No greeting..."

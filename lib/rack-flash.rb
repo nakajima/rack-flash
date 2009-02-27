@@ -28,16 +28,6 @@ module Rack
         [cache, values].any? { |store| store.keys.include?(key.to_sym) }
       end
 
-      # Hide the underlying :__FLASH__ session key and only expose values stored
-      # in the flash.
-      def inspect
-        '#<FlashHash @values=%s>' % [values.inspect]
-      end
-      
-      def to_s
-        values.inspect
-      end
-      
       # Mark existing entries to allow for sweeping.
       def flag!
         @flagged = values.keys
@@ -47,6 +37,17 @@ module Rack
       def sweep!
         Array(flagged).each { |key| values.delete(key) }
         flagged.clear
+      end
+      
+      # Hide the underlying :__FLASH__ session key and only expose values stored
+      # in the flash.
+      def inspect
+        '#<FlashHash @values=%s>' % [values.inspect]
+      end
+      
+      # Human readable for logging.
+      def to_s
+        values.inspect
       end
 
       private
@@ -80,7 +81,7 @@ module Rack
       @app.class.class_eval do
         def flash
           raise Rack::Flash::SessionUnavailable \
-            .new('You must have sessions enabled to use Rack::Flash.') unless env['rack.session']
+            .new('Rack::Flash depends on session middleware.') unless env['rack.session']
           @flash ||= Rack::Flash::FlashHash.new(env['rack.session'])
         end
       end
