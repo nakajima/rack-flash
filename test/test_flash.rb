@@ -95,29 +95,25 @@ describe 'Rack::Flash' do
     }.should.raise(NoMethodError)
   end
 
-  describe 'session integration' do
-    before do
+  describe 'integration' do
+    it 'provides :sweep option to clear unused entries' do
       mock_app {
-        use Rack::Flash
+        use Rack::Flash, :sweep => true
 
         set :sessions, true
 
-        get '/view' do
-          flash[:notice]
-        end
-
-        post '/set' do
-          flash[:notice] = params[:q]
-          redirect '/view'
+        get '/' do
+          'ok'
         end
       }
-    end
 
-    it 'is empty by default' do
-      err_explain do
-        get '/view'
-        body.should.be.empty
-      end
+      fake_flash = Rack::FakeFlash.new(:foo => 'bar')
+
+      get '/', :env => { 'rack-flash' => fake_flash }
+
+      fake_flash.should.be.flagged
+      fake_flash.should.be.swept
+      fake_flash.store[:foo].should.be.nil
     end
   end
 

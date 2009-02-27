@@ -23,3 +23,33 @@ end
 def mock_app(&block)
   @app = Sinatra.new(&block)
 end
+
+module Rack
+  class FakeFlash < Rack::Flash::FlashHash
+    attr_reader :flagged, :sweeped, :store
+
+    def initialize(*args)
+      @flagged, @sweeped = false, false
+      @store = {}
+      super(@store)
+    end
+
+    def flag!
+      @flagged = true
+      super
+    end
+
+    def sweep!
+      @sweeped = true
+      super
+    end
+
+    def flagged?
+      @flagged
+    end
+
+    def swept?
+      @sweeped
+    end
+  end
+end

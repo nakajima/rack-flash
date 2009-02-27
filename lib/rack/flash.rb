@@ -118,8 +118,19 @@ module Rack
     end
 
     def call(env)
-      env['rack-flash'] = Rack::Flash::FlashHash.new(env['rack.session'], @opts)
-      @app.call(env)
+      env['rack-flash'] ||= Rack::Flash::FlashHash.new(env['rack.session'], @opts)
+
+      if @opts[:sweep]
+        env['rack-flash'].flag!
+      end
+
+      res = @app.call(env)
+
+      if @opts[:sweep]
+        env['rack-flash'].sweep!
+      end
+
+      res
     end
   end
 end
