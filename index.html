@@ -22,7 +22,7 @@
 		h1 .small { font-size: 0.4em; }
 		h1 a { text-decoration: none }
 		h2 { font-size: 1.5em; color: #000000; }
-    h3 { text-align: center; color: #000000; }
+    h3 { color: #000000; }
     a { color: #000000; }
     .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; }
     .download { float: right; }
@@ -37,10 +37,18 @@
 		code {
 		  font-family: Bitstream Vera Sans Mono;
 		  font-size: 0.9em;
+		  background: #eef;
+		  padding: 2px 3px;
 		}
 		
 		pre code {
 		  font-size: 1em;
+		}
+		
+		.highlight pre {
+		  background: #eef;
+		  color: #222;
+		  padding: 10px;
 		}
 		
 		.c1 {
@@ -51,8 +59,17 @@
 		  color: #f09;
 		}
 		
-		.ss {
+		.ss, .kp {
+		  color: #009ECC;
+		}
+		
+		.k {
+		  color: #12A4E0;
+		}
+		
+		.mi {
 		  color: #52B7E0;
+		  font-weight: bold;
 		}
 	</style>
 	
@@ -74,7 +91,7 @@
       <span class="small">by <a href="http://github.com/nakajima">nakajima</a></small></h1>
 
     <div class="description">
-      <div class="highlight"><pre><span class="n">flash</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;You can stop rolling your own now.&quot;</span></pre></div>
+      <div class="highlight"><pre><span class="n">flash</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> = <span class="s2">&quot;You can stop rolling your own now.&quot;</span></pre></div>
     </div>
 
 <p>Simple flash hash implementation for Rack apps.</p>
@@ -87,21 +104,20 @@
 
 <h3 id="vanilla_rack_apps">Vanilla Rack apps</h3>
 
-<p>You can access flash entries via <code>env['rack-flash']</code>. You can treat it either
+<p>You can access flash entries via <code><span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">]</span></code>. You can treat it either
 like a regular flash hash:</p>
 
-<div class="highlight"><pre><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Flash</span><span class="p">,</span> <span class="ss">:accessorize</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:notice</span><span class="p">,</span> <span class="ss">:error</span><span class="o">]</span>
+<div class="highlight"><pre><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Flash</span>
 
 <span class="c1"># Set a flash entry</span>
-<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="o">=</span> <span class="s1">&#39;You have logged out.&#39;</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">][</span><span class="s1">&#39;notice&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;You have logged out.&#39;</span>
 
 <span class="c1"># Get a flash entry</span>
-<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="c1"># =&gt; &#39;You have logged out.&#39;</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">][</span><span class="s1">&#39;notice&#39;</span><span class="o">]</span> <span class="c1"># =&gt; &#39;You have logged out.&#39;</span>
 
 <span class="c1"># Set a a flash entry for only the current request</span>
-<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice!</span> <span class="s1">&#39;You have logged out.&#39;</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">now</span><span class="o">[</span><span class="s1">&#39;notice&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;You have logged out.&#39;</span>
 </pre></div>
-
 
 <p>Or you can pass the <code>:accessorize</code> option to declare your flash types. Each of
 these will have accessors defined on the flash object:</p>
@@ -109,10 +125,10 @@ these will have accessors defined on the flash object:</p>
 <div class="highlight"><pre><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Flash</span><span class="p">,</span> <span class="ss">:accessorize</span> <span class="o">=></span> <span class="o">[</span><span class="ss">:notice</span><span class="p">,</span> <span class="ss">:error</span><span class="o">]</span>
 
 <span class="c1"># Set a flash entry</span>
-<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="o">=</span> <span class="s1">&#39;You have logged out.&#39;</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> = <span class="s1">&#39;You have logged out.&#39;</span>
 
 <span class="c1"># Get a flash entry</span>
-<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="c1"># =&amp;gt; &#39;You have logged out.&#39;</span>
+<span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="c1"># => &#39;You have logged out.&#39;</span>
 
 <span class="c1"># Set a a flash entry for only the current request</span>
 <span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice!</span> <span class="s1">&#39;You have logged out.&#39;</span>
@@ -121,20 +137,20 @@ these will have accessors defined on the flash object:</p>
 
 <p>Sample rack app:</p>
 
-<div class="highlight"><pre><span class="n">get</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+<div class="highlight"><pre><span class="n">get</span> = <span class="nb">proc</span> <span class="p">{</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
   <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{},</span>
     <span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="o">||</span> <span class="s1">&#39;No flash set. Try going to /set&#39;</span>
   <span class="o">]</span>
 <span class="p">}</span>
 
-<span class="n">set</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
-  <span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> <span class="o">=</span> <span class="s1">&#39;Hey, the flash was set!&#39;</span>
+<span class="n">set</span> = <span class="nb">proc</span> <span class="p">{</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+  <span class="n">env</span><span class="o">[</span><span class="s1">&#39;rack-flash&#39;</span><span class="o">].</span><span class="n">notice</span> = <span class="s1">&#39;Hey, the flash was set!&#39;</span>
   <span class="o">[</span><span class="mi">302</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Location&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/&#39;</span><span class="p">},</span>
     <span class="s1">&#39;You are being redirected.&#39;</span>
   <span class="o">]</span>
 <span class="p">}</span>
 
-<span class="n">builder</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Builder</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+<span class="n">builder</span> = <span class="no">Rack</span><span class="o">::</span><span class="no">Builder</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
   <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Session</span><span class="o">::</span><span class="no">Cookie</span>
   <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Flash</span><span class="p">,</span> <span class="ss">:accessorize</span> <span class="o">=&gt;</span> <span class="kp">true</span>
 
@@ -152,18 +168,18 @@ these will have accessors defined on the flash object:</p>
 <div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;sinatra/base&#39;</span>
 <span class="nb">require</span> <span class="s1">&#39;rack-flash&#39;</span>
 
-<span class="k">class</span> <span class="nc">MyApp</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">Sinatra</span><span class="o">::</span><span class="no">Base</span>
+<span class="k">class</span> <span class="nc">MyApp</span> < <span class="no">Sinatra</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Flash</span>
 
   <span class="n">post</span> <span class="s1">&#39;/set-flash&#39;</span> <span class="k">do</span>
     <span class="c1"># Set a flash entry</span>
-    <span class="n">flash</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;Thanks for signing up!&quot;</span>
+    <span class="n">flash</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> = <span class="s2">&quot;Thanks for signing up!&quot;</span>
 
     <span class="c1"># Get a flash entry</span>
-    <span class="n">flash</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> <span class="c1"># =&amp;gt; &quot;Thanks for signing up!&quot;</span>
+    <span class="n">flash</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> <span class="c1"># => &quot;Thanks for signing up!&quot;</span>
 
     <span class="c1"># Set a flash entry for only the current request</span>
-    <span class="n">flash</span><span class="o">.</span><span class="n">now</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;Thanks for signing up!&quot;</span>
+    <span class="n">flash</span><span class="o">.</span><span class="n">now</span><span class="o">[</span><span class="ss">:notice</span><span class="o">]</span> = <span class="s2">&quot;Thanks for signing up!&quot;</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </pre></div>
