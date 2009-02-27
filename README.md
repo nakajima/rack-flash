@@ -1,8 +1,6 @@
 # Rack Flash
 
-Simple flash hash implementation for Raçk apps. My implementation has slightly
-different behavior than Rails in that it doesn't delete entries until they used.
-I think it's pretty rad, but I'm happy to hear thoughts to the contrary.
+Simple flash hash implementation for Rack apps.
 
 Try it out here: [flash.patnakajima.net](http://flash.patnakajima.net).
 
@@ -12,10 +10,24 @@ Here's how to use it.
 
 ### Vanilla Rack apps
 
-You can access flash entries via `env['rack-flash']`. You can treat it either like a regular
-flash hash (via the `env['rack-flash'][:notice]` style), or you can pass the `:accessorize`
-option when you call `use Rack::Flash`, and you'll be able to use the accessor style, which
-generates accessors on the fly (`env['rack-flash'].notice` and the like).
+You can access flash entries via `env['rack-flash']`. You can treat it either
+like a regular flash hash:
+
+    env['rack-flash'][:notice] = 'You have logged out.'
+
+Or you can pass the `:accessorize` option to declare your flash types. Each of
+these will have accessors defined on the flash object:
+
+    use Rack::Flash, :accessorize => [:notice, :error]
+    
+    # Set a flash entry
+    env['rack-flash'].notice = 'You have logged out.'
+    
+    # Get a flash entry
+    env['rack-flash'].notice # => 'You have logged out.'
+    
+    # Set a a flash entry for only the current request
+    env['rack-flash'].notice! 'You have logged out.'
 
 Sample rack app:
 
@@ -26,7 +38,7 @@ Sample rack app:
     }
 
     set = proc { |env|
-      env['rack-flash'].notice = 'Hey, the flash was set! Now refresh and watch it go away.'
+      env['rack-flash'].notice = 'Hey, the flash was set!'
       [302, {'Location' => '/'},
         'You are being redirected.'
       ]
@@ -52,17 +64,27 @@ If you're using Sinatra, you can use the flash hash just like in Rails:
     class MyApp < Sinatra::Base
       use Rack::Flash
 
-      get '/' do
-        flash[:greeting] || "No greeting..."
+      post '/set-flash' do
+        # Set a flash entry
+        flash[:notice] = "Thanks for signing up!"
+        
+        # Get a flash entry
+        flash[:notice] # => "Thanks for signing up!"
+        
+        # Set a flash entry for only the current request
+        flash.now[:notice] = "Thanks for signing up!"
       end
-
-      get '/greeting' do
-        flash[:greeting] = params[:q]
-        redirect '/'
-      end
-
-      run!
     end
 
-If you've got any ideas on how to simplify access to the flash hash for non-Sinatra
-apps, let me know. It still feels a bit off to me.
+If you've got any ideas on how to simplify access to the flash hash for vanilla
+Rack apps, let me know. It still feels a bit off to me.
+
+## Sweeping stale entries
+
+By default Rack::Flash has slightly different behavior than Rails in that it
+doesn't delete entries until they are used. If you want entries to be cleared
+even if they are not ever accessed, you can use the `:sweep` option:
+
+    use Rack::Flash, :sweep => true
+
+This will sweep stale flash entries, whether your not you actually use them.

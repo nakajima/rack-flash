@@ -1,5 +1,3 @@
-require 'metaid'
-
 module Rack
   class Flash
     # Raised when the session passed to FlashHash initialize is nil. This
@@ -17,6 +15,10 @@ module Rack
         @opts = opts
         @store = store
         @store[:__FLASH__] ||= {}
+
+        if accessors = @opts[:accessorize]
+          accessors.each { |opt| def_accessor(opt) }
+        end
       end
 
       # Remove an entry from the session and return its value. Cache result in
@@ -30,6 +32,13 @@ module Rack
       def []=(key,val)
         key = key.to_sym
         cache[key] = values[key] = val
+      end
+
+      # Store a flash entry for only the current request, swept regardless of
+      # whether or not it was actually accessed. Useful for AJAX requests, where
+      # you want a flash message, even though you're response isn't redirecting.
+      def now
+        cache
       end
 
       # Checks for the presence of a flash entry without retrieving or removing
@@ -60,17 +69,6 @@ module Rack
         values.inspect
       end
 
-      # Allow more convenient style for accessing flash entries (This isn't really
-      # necessary for Sinatra, since it provides the flash[:foo] hash that we're all
-      # used to. This is for vanilla Rack apps where it can be difficult to define
-      # such helpers as middleware).
-      def method_missing(sym, *args)
-        super unless @opts[:accessorize]
-        key = sym.to_s =~ /\w=$/ ? sym.to_s[0..-2] : sym
-        def_accessors(key)
-        send(sym, *args)
-      end
-
       private
 
       # Maintain an instance-level cache of retrieved flash entries. These
@@ -87,19 +85,13 @@ module Rack
       end
 
       # Generate accessor methods for the given entry key if :accessorize is true.
-      def def_accessors(key)
-        return if respond_to?(key)
+      def def_accessor(key)
+        raise ArgumentError.new('Invalid entry type: %s' % key) if respond_to?(key)
 
-        meta_def(key) do |*args|
-          if val = args.first
-            self[key] = val
-          else
-            self[key]
-          end
-        end
-
-        meta_def("#{key}=") do |val|
-          self[key] = val
+        class << self; self end.class_eval do
+          define_method(key) { |*args| val = args.first; val ? (self[key]=val) : self[key] }
+          define_method("#{key}=") { |val| self[key] = val }
+          define_method("#{key}!") { |val| cache[key] = val }
         end
       end
     end

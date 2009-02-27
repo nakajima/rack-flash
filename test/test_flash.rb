@@ -57,9 +57,16 @@ describe 'Rack::Flash' do
     end
   end
 
+  it 'allows setters with Flash.now semantics' do
+    flash = new_flash
+    flash.now[:foo] = 'bar'
+    flash[:foo].should.equal('bar')
+    new_flash[:foo].should.be.nil
+  end
+
   describe 'accessorize option' do
     def new_flash(entries={})
-      flash = Rack::Flash::FlashHash.new(@fake_session, :accessorize => true)
+      flash = Rack::Flash::FlashHash.new(@fake_session, :accessorize => [:foo, :fizz])
       entries.each { |key,val| flash[key] = val }
       flash
     end
@@ -79,6 +86,22 @@ describe 'Rack::Flash' do
       flash = new_flash
       flash.fizz 'buzz'
       flash.fizz.should.equal('buzz')
+    end
+
+    it 'allows setters with Flash.now semantics' do
+      flash = new_flash
+      flash.foo! 'bar'
+      flash.foo.should.equal('bar')
+      new_flash[:foo].should.be.nil
+    end
+
+    it 'only defines accessors for passed entry types' do
+      err_explain do
+        flash = new_flash
+        proc {
+          flash.bliggety = 'blam'
+        }.should.raise(NoMethodError)
+      end
     end
   end
 
