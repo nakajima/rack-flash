@@ -61,7 +61,7 @@ module Rack
       # Hide the underlying :__FLASH__ session key and only expose values stored
       # in the flash.
       def inspect
-        '#<FlashHash @values=%s>' % [values.inspect]
+        '#<FlashHash @values=%s @cache=%s>' % [values.inspect, cache.inspect]
       end
 
       # Human readable for logging.
