@@ -46,6 +46,7 @@ module Rack
       def has?(key)
         [cache, values].any? { |store| store.keys.include?(key.to_sym) }
       end
+      alias_method :include?, :has?
 
       # Mark existing entries to allow for sweeping.
       def flag!
