@@ -6,6 +6,8 @@ Simple flash hash implementation for Rack apps.
 
 Try it out here: [flash.patnakajima.net](http://flash.patnakajima.net).
 
+[View the RDoc](http://gitrdoc.com/nakajima/rack-flash/tree/master).
+
 ## Usage
 
 Here's how to use it.
