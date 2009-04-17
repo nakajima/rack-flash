@@ -3,14 +3,25 @@ module Rack
     attr :ins
     def use(middleware, *args, &block)
       middleware.instance_variable_set "@rack_builder", self
+      def middleware.rack_builder
+        @rack_builder
+      end
       @ins << lambda { |app| 
         middleware.new(app, *args, &block) 
       }
     end
 
     def run(app)
-      app.class.instance_variable_set "@rack_builder", self
+      klass = app.class
+      klass.instance_variable_set "@rack_builder", self
+      def klass.rack_builder
+        @rack_builder
+      end
       @ins << app #lambda { |nothing| app }
+    end
+    
+    def leaf_app
+      ins.last
     end
   end
 end
@@ -120,7 +131,7 @@ module Rack
     def initialize(app, opts={})
       app_class = opts[:flash_app_class] || 
         defined?(Sinatra::Base) && Sinatra::Base ||
-        self.class.instance_variable_get("@rack_builder").ins.last.class
+        self.class.rack_builder.leaf_app.class
       app_class.class_eval do
         def flash; env['rack-flash'] end
       end
