@@ -105,6 +105,8 @@ module Rack
         Sinatra::Base.class_eval do
           def flash; env['rack-flash'] end
         end
+      else
+        def app.flash; env['rack-flash'];end
       end
 
       @app, @opts = app, opts
