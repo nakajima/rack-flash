@@ -1,4 +1,21 @@
 module Rack
+  class Builder
+    attr :ins
+    def use(middleware, *args, &block)
+      middleware.instance_variable_set "@rack_builder", self
+      @ins << lambda { |app| 
+        middleware.new(app, *args, &block) 
+      }
+    end
+
+    def run(app)
+      app.class.instance_variable_set "@rack_builder", self
+      @ins << app #lambda { |nothing| app }
+    end
+  end
+end
+
+module Rack
   class Flash
     # Raised when the session passed to FlashHash initialize is nil. This
     # is usually an indicator that session middleware is not in use.
@@ -104,6 +121,11 @@ module Rack
       if app_class = opts[:flash_app_class] || defined?(Sinatra::Base) && Sinatra::Base
         app_class.class_eval do
           def flash; env['rack-flash'] end
+        end
+      else
+        rack_root_app = self.class.instance_variable_get("@rack_builder").ins.last
+        def rack_root_app.flash
+          env['rack-flash']
         end
       end
       @app, @opts = app, opts

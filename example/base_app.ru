@@ -17,6 +17,6 @@ class Base
   end
 end
 use Rack::Session::Cookie
-use Rack::Flash, :flash_app_class => Base
+use Rack::Flash#, :flash_app_class => Base
 use Rack::ShowExceptions
 run Base.new
