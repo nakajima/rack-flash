@@ -101,14 +101,11 @@ module Rack
     # - Rack Middleware implementation
 
     def initialize(app, opts={})
-      if defined?(Sinatra::Base)
-        Sinatra::Base.class_eval do
+      if app_class = opts[:flash_app_class] || defined?(Sinatra::Base) && Sinatra::Base
+        app_class.class_eval do
           def flash; env['rack-flash'] end
         end
-      else
-        def app.flash; env['rack-flash'];end
       end
-
       @app, @opts = app, opts
     end
 

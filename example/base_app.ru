@@ -1,5 +1,6 @@
 require 'rack/request'
 require 'rack/response'
+require 'rack/showexceptions'
 require 'rack/session/cookie'
 require File.dirname(__FILE__) + '/../lib/rack-flash'
 
@@ -15,7 +16,7 @@ class Base
     res.finish
   end
 end
-
 use Rack::Session::Cookie
-use Rack::Flash
+use Rack::Flash, :flash_app_class => Base
+use Rack::ShowExceptions
 run Base.new
