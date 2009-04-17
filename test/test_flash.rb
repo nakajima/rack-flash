@@ -132,7 +132,7 @@ describe 'Rack::Flash' do
 
       fake_flash = Rack::FakeFlash.new(:foo => 'bar')
 
-      get '/', :env => { 'rack-flash' => fake_flash }
+      get '/', :env => { 'rack.flash' => fake_flash }
 
       fake_flash.should.be.flagged
       fake_flash.should.be.swept
