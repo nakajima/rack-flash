@@ -14,10 +14,10 @@ Here's how to use it.
 
 ### Vanilla Rack apps
 
-You can access flash entries via `env['rack-flash']`. You can treat it either
+You can access flash entries via `env['x-rack.flash']`. You can treat it either
 like a regular flash hash:
 
-    env['rack-flash'][:notice] = 'You have logged out.'
+    env['x-rack.flash'][:notice] = 'You have logged out.'
 
 Or you can pass the `:accessorize` option to declare your flash types. Each of
 these will have accessors defined on the flash object:
@@ -25,24 +25,24 @@ these will have accessors defined on the flash object:
     use Rack::Flash, :accessorize => [:notice, :error]
     
     # Set a flash entry
-    env['rack-flash'].notice = 'You have logged out.'
+    env['x-rack.flash'].notice = 'You have logged out.'
     
     # Get a flash entry
-    env['rack-flash'].notice # => 'You have logged out.'
+    env['x-rack.flash'].notice # => 'You have logged out.'
     
     # Set a a flash entry for only the current request
-    env['rack-flash'].notice! 'You have logged out.'
+    env['x-rack.flash'].notice! 'You have logged out.'
 
 Sample rack app:
 
     get = proc { |env|
       [200, {},
-        env['rack-flash'].notice || 'No flash set. Try going to /set'
+        env['x-rack.flash'].notice || 'No flash set. Try going to /set'
       ]
     }
 
     set = proc { |env|
-      env['rack-flash'].notice = 'Hey, the flash was set!'
+      env['x-rack.flash'].notice = 'Hey, the flash was set!'
       [302, {'Location' => '/'},
         'You are being redirected.'
       ]

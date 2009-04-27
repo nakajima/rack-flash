@@ -131,7 +131,7 @@ module Rack
     def initialize(app, opts={})
       if klass = app_class(app, opts)
         klass.class_eval do
-          def flash; env['rack.flash'] end
+          def flash; env['x-rack.flash'] end
         end
       end
 
@@ -139,16 +139,16 @@ module Rack
     end
 
     def call(env)
-      env['rack.flash'] ||= Rack::Flash::FlashHash.new(env['rack.session'], @opts)
+      env['x-rack.flash'] ||= Rack::Flash::FlashHash.new(env['rack.session'], @opts)
 
       if @opts[:sweep]
-        env['rack.flash'].flag!
+        env['x-rack.flash'].flag!
       end
 
       res = @app.call(env)
 
       if @opts[:sweep]
-        env['rack.flash'].sweep!
+        env['x-rack.flash'].sweep!
       end
 
       res
