@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rack-flash}
-  s.version = "0.0.7"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pat Nakajima"]
@@ -10,7 +10,8 @@ Gem::Specification.new do |s|
   s.email = %q{patnakajima@gmail.com}
   s.files = [
     "lib/rack-flash.rb",
-    "lib/rack/flash.rb"
+    "lib/rack/flash.rb",
+    "lib/rack/flash/test.rb"
   ]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.1}
