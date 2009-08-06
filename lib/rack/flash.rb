@@ -35,14 +35,8 @@ module Rack
     # Implements bracket accessors for storing and retrieving flash entries.
     class FlashHash
       attr_reader :flagged
-      
-      def self.default_store
-        nil
-      end
 
       def initialize(store, opts={})
-        store ||= FlashHash.default_store
-        
         raise Rack::Flash::SessionUnavailable \
           .new('Rack::Flash depends on session middleware.') unless store
 
