@@ -89,4 +89,4 @@ even if they are not ever accessed, you can use the `:sweep` option:
 
     use Rack::Flash, :sweep => true
 
-This will sweep stale flash entries, whether your not you actually use them.
+This will sweep stale flash entries, whether or not you actually use them.
