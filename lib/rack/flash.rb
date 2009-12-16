@@ -42,7 +42,6 @@ module Rack
 
         @opts = opts
         @store = store
-        @store[:__FLASH__] ||= {}
 
         if accessors = @opts[:accessorize]
           accessors.each { |opt| def_accessor(opt) }
@@ -110,7 +109,7 @@ module Rack
       # Helper to access flash entries from :__FLASH__ session value. This key
       # is used to prevent collisions with other user-defined session values.
       def values
-        @store[:__FLASH__]
+        @store[:__FLASH__] ||= {}
       end
 
       # Generate accessor methods for the given entry key if :accessorize is true.
