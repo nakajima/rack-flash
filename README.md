@@ -64,6 +64,7 @@ If you're using Sinatra, you can use the flash hash just like in Rails:
     require 'rack-flash'
 
     class MyApp < Sinatra::Base
+      enable :sessions
       use Rack::Flash
 
       post '/set-flash' do
