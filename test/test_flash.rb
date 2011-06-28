@@ -64,6 +64,13 @@ describe 'Rack::Flash' do
     new_flash[:foo].should.be.nil
   end
 
+  it 'does not raise an error when session is cleared' do
+    flash = new_flash
+    flash[:foo] = 'bar'
+    @fake_session.clear
+    flash['foo'].should.equal(nil)
+  end
+
   describe 'accessorize option' do
     def new_flash(entries={})
       flash = Rack::Flash::FlashHash.new(@fake_session, :accessorize => [:foo, :fizz])
