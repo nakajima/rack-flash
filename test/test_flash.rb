@@ -1,6 +1,12 @@
 require File.dirname(__FILE__) + '/helper'
 
 describe 'Rack::Flash' do
+  include Rack::Test::Methods
+
+  def app(&block)
+    return Sinatra.new &block
+  end
+
   before do
     @fake_session = {}
   end
@@ -127,7 +133,7 @@ describe 'Rack::Flash' do
 
   describe 'integration' do
     it 'provides :sweep option to clear unused entries' do
-      mock_app {
+      app {
         use Rack::Flash, :sweep => true
 
         set :sessions, true
@@ -139,7 +145,7 @@ describe 'Rack::Flash' do
 
       fake_flash = Rack::FakeFlash.new(:foo => 'bar')
 
-      get '/', :env => { 'x-rack.flash' => fake_flash }
+      get '/', :env=>{ 'x-rack.flash' => fake_flash }
 
       fake_flash.should.be.flagged
       fake_flash.should.be.swept
