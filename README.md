@@ -10,6 +10,10 @@ Simple flash hash implementation for Rack apps.
 
 Here's how to use it.
 
+### Install / add to Gemfile
+
+    gem 'rack-flash3'
+
 ### Vanilla Rack apps
 
 You can access flash entries via `env['x-rack.flash']`. You can treat it either
