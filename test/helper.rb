@@ -1,9 +1,8 @@
 require 'rubygems'
-gem 'sinatra', '<1.0.0'
+gem 'sinatra', '<=1.3.2'
 require 'sinatra/base'
 require 'bacon'
-require 'sinatra/test'
-require 'sinatra/test/bacon'
+require 'rack/test'
 require File.join(File.dirname(__FILE__), *%w[.. lib rack-flash])
 
 class String
@@ -19,10 +18,6 @@ def err_explain
     puts e.backtrace
     raise e
   end
-end
-
-def mock_app(&block)
-  @app = Sinatra.new(&block)
 end
 
 module Rack
