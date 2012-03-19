@@ -4,7 +4,7 @@ require 'rake'
 begin
   require 'jeweler2'
   Jeweler::Tasks.new do |gem|
-    gem.name = "rack-flash2"
+    gem.name = "rack-flash3"
     gem.summary = "Flash hash implementation for Rack apps."
     gem.description = "Flash hash implementation for Rack apps."
     gem.email = "treeder@gmail.com"
