@@ -11,7 +11,7 @@ begin
     gem.homepage = "http://www.iron.io"
     gem.authors = ["Pat Nakajima", "Travis Reeder"]
     gem.add_dependency 'rack'
-    gem.required_ruby_version = '>= 1.9'
+    # gem.required_ruby_version = '>= 1.9'
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
