@@ -12,6 +12,7 @@ begin
     gem.authors = ["Pat Nakajima", "Travis Reeder"]
     gem.add_dependency 'rack'
     gem.add_development_dependency 'rake'
+    gem.add_development_dependency 'jeweler2'
     # gem.required_ruby_version = '>= 1.9'
   end
   Jeweler::GemcutterTasks.new
