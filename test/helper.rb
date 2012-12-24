@@ -1,5 +1,4 @@
 require 'rubygems'
-gem 'sinatra', '<=1.3.2'
 require 'sinatra/base'
 require 'bacon'
 require 'rack/test'
