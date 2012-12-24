@@ -11,6 +11,7 @@ begin
     gem.homepage = "http://www.iron.io"
     gem.authors = ["Pat Nakajima", "Travis Reeder"]
     gem.add_dependency 'rack'
+    gem.add_development_dependency 'rake'
     # gem.required_ruby_version = '>= 1.9'
   end
   Jeweler::GemcutterTasks.new
