@@ -15,6 +15,7 @@ begin
     gem.add_development_dependency 'jeweler2'
     gem.add_development_dependency 'rack-test'
     gem.add_development_dependency 'sinatra', '<= 1.3.2'
+    gem.add_development_dependency 'bacon'
     # gem.required_ruby_version = '>= 1.9'
   end
   Jeweler::GemcutterTasks.new
