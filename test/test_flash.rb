@@ -4,7 +4,7 @@ describe 'Rack::Flash' do
   extend Rack::Test::Methods
 
   def app(&block)
-    return Sinatra.new &block
+    return Sinatra.new block
   end
 
   before do
