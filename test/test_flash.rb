@@ -17,6 +17,10 @@ describe 'Rack::Flash' do
     flash
   end
 
+  it 'responds to each' do
+    new_flash.methods.should.include(:each)
+  end
+
   it 'stores entries' do
     new_flash[:foo] = 'bar'
     new_flash[:foo].should.equal('bar')
