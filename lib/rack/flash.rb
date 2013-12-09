@@ -21,6 +21,10 @@ module Rack
         end
       end
 
+      def each &block
+        values.each &block
+      end
+
       # Remove an entry from the session and return its value. Cache result in
       # the instance cache.
       def [](key)

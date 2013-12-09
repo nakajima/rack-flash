@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/helper'
 
 describe 'Rack::Flash' do
-  include Rack::Test::Methods
+  extend Rack::Test::Methods
 
   def app(&block)
     return Sinatra.new &block
@@ -15,6 +15,10 @@ describe 'Rack::Flash' do
     flash = Rack::Flash::FlashHash.new(@fake_session)
     entries.each { |key,val| flash[key] = val }
     flash
+  end
+
+  it 'responds to each' do
+    new_flash.methods.should.include(:each)
   end
 
   it 'stores entries' do
