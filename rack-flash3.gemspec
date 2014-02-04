@@ -9,13 +9,14 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pat Nakajima", "Travis Reeder"]
-  s.date = "2012-03-27"
+  s.date = "2012-12-24"
   s.description = "Flash hash implementation for Rack apps."
   s.email = "treeder@gmail.com"
   s.extra_rdoc_files = [
     "README.md"
   ]
   s.files = [
+    "Gemfile",
     "README.md",
     "Rakefile",
     "VERSION.yml",
@@ -33,7 +34,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "http://www.iron.io"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "Flash hash implementation for Rack apps."
 
   if s.respond_to? :specification_version then
@@ -41,14 +42,29 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rack>, [">= 0"])
-      s.add_runtime_dependency(%q<rack>, [">= 0"])
+      s.add_development_dependency(%q<rake>, [">= 0"])
+      s.add_development_dependency(%q<jeweler2>, [">= 0"])
+      s.add_development_dependency(%q<rack-test>, [">= 0"])
+      s.add_development_dependency(%q<sinatra>, ["<= 1.3.2"])
+      s.add_development_dependency(%q<bacon>, [">= 0"])
+      s.add_runtime_dependency(%q<rack-flash3>, [">= 0"])
     else
       s.add_dependency(%q<rack>, [">= 0"])
-      s.add_dependency(%q<rack>, [">= 0"])
+      s.add_dependency(%q<rake>, [">= 0"])
+      s.add_dependency(%q<jeweler2>, [">= 0"])
+      s.add_dependency(%q<rack-test>, [">= 0"])
+      s.add_dependency(%q<sinatra>, ["<= 1.3.2"])
+      s.add_dependency(%q<bacon>, [">= 0"])
+      s.add_dependency(%q<rack-flash3>, [">= 0"])
     end
   else
     s.add_dependency(%q<rack>, [">= 0"])
-    s.add_dependency(%q<rack>, [">= 0"])
+    s.add_dependency(%q<rake>, [">= 0"])
+    s.add_dependency(%q<jeweler2>, [">= 0"])
+    s.add_dependency(%q<rack-test>, [">= 0"])
+    s.add_dependency(%q<sinatra>, ["<= 1.3.2"])
+    s.add_dependency(%q<bacon>, [">= 0"])
+    s.add_dependency(%q<rack-flash3>, [">= 0"])
   end
 end
 

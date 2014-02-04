@@ -1,10 +1,10 @@
 require File.dirname(__FILE__) + '/helper'
 
 describe 'Rack::Flash' do
-  include Rack::Test::Methods
+  extend Rack::Test::Methods
 
   def app(&block)
-    return Sinatra.new &block
+    return Sinatra.new block
   end
 
   before do
