@@ -1,0 +1,23 @@
+PATH
+  remote: .
+  specs:
+    rack-flash3 (1.0.1)
+      rack
+      rack
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    bacon (1.0.0)
+    git (1.2.9.1)
+    jeweler2 (2.0.9)
+      git (>= 1.2.5)
+    rack (1.6.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bacon
+  jeweler2
+  rack-flash3!

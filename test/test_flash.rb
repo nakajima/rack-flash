@@ -1,10 +1,10 @@
-require File.dirname(__FILE__) + '/helper'
+require_relative './helper'
+include Rack::Test::Methods
 
 describe 'Rack::Flash' do
-  include Rack::Test::Methods
 
   def app(&block)
-    return Sinatra.new &block
+    Sinatra.new(&block)
   end
 
   before do
@@ -22,9 +22,16 @@ describe 'Rack::Flash' do
     new_flash[:foo].should.equal('bar')
   end
 
-  it 'accepts strings or hashes' do
+  it 'accepts strings or symbols' do
     new_flash[:foo] = 'bar'
     new_flash['foo'].should.equal('bar')
+  end
+
+  it 'can be iterated over' do
+    flash = new_flash(:foo => 'bar', :fizz => 'buzz')
+    keys = flash.map { |key, value| key }
+    keys.should.include(:foo)
+    keys.should.include(:fizz)
   end
 
   it 'deletes entries from session after retrieval' do
@@ -74,6 +81,7 @@ describe 'Rack::Flash' do
     flash = new_flash
     flash[:foo] = 'bar'
     @fake_session.clear
+    flash.clear_cache!
     flash['foo'].should.equal(nil)
   end
 
@@ -143,7 +151,8 @@ describe 'Rack::Flash' do
         end
       }
 
-      fake_flash = Rack::FakeFlash.new(:foo => 'bar')
+      fake_flash = Rack::FakeFlash.new
+      fake_flash[:foo] = 'bar'
 
       get '/', :env=>{ 'x-rack.flash' => fake_flash }
 
