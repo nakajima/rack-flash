@@ -7,6 +7,7 @@ module Rack
 
     # Implements bracket accessors for storing and retrieving flash entries.
     class FlashHash
+      include Enumerable
       attr_reader :flagged
 
       def initialize(store, opts={})
@@ -18,6 +19,14 @@ module Rack
 
         if accessors = @opts[:accessorize]
           accessors.each { |opt| def_accessor(opt) }
+        end
+      end
+
+      def each(&block)
+        if values.empty?
+          cache.each(&block)
+        else
+          values.each(&block)
         end
       end
 
@@ -57,6 +66,11 @@ module Rack
       def sweep!
         Array(flagged).each { |key| values.delete(key) }
         flagged.clear
+      end
+
+      # Clear the internal cache
+      def clear_cache!
+        @cache.clear
       end
 
       # Hide the underlying :__FLASH__ session key and only expose values stored
